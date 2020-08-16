@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "AddProjectCategory";
+    Layout = "~/Views/Shared/_PrivateLayout.cshtml";
+}
+
+<h1 class="page-header" active-menu="#lead_reports" active-submenu="#menu-leadreport">Add Project Category</h1>
+
+<style>
+    .id_tancopy1 {
+        display: block !important;
+        background-color: black;
+    }
+</style>
+
+<form id="frmCreateProject" data-parsley-validate>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row form-group">
+                        <div class="col-sm-4">
+                            <label>Category Name:<em>*</em></label>
+                            <input class="form-control" id="id_CategoryName" type="text" name="Category Name" />
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label>Category Description:<em>*</em></label>
+                            <input class="form-control" id="id_Description" type="text" name="Category Description" />
+                        </div>
+                    </div>
+
+                    <div class="row margin-bottom10 margin-top10">
+                        <div class="col-md-12">
+                            <div style="float:right">
+                                <button class="btn btn-primary" onclick="btnsubmit()" type="button">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                    </div>
+                </div> <!-- / .panel-body -->
+
+            </div> <!-- / .panel-footer -->
+
+        </div>
+    </div>
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+    });
+
+    function btnsubmit() {
+        var flag = parsleyForms.parsley().validate();
+        if (flag) {
+            var uploadFormData = new FormData();
+            uploadFormData.append('CategoryName', $("#id_CategoryName").val());
+            uploadFormData.append('CategoryDescription', $("#id_Description").val());
+
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddProjectCategory", "Projectmanagement")',
+                contentType: false,
+                processData: false,
+                data: uploadFormData,
+                success: function (data) {
+                    debugger;
+                    alert(data);
+                },
+                error: function () {
+                }
+            });
+        }
+    }
+
+</script>

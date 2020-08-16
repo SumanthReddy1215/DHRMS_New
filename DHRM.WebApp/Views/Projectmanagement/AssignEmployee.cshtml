@@ -1,0 +1,165 @@
+﻿
+@{
+    ViewBag.Title = "AssignEmployee";
+    Layout = "~/Views/Shared/_PrivateLayout.cshtml";
+}
+
+<h1 class="page-header" active-menu="#lead_reports" active-submenu="#menu-leadreport">Assign Employees</h1>
+
+<style>
+    .id_tancopy1 {
+        display: block !important;
+        background-color: black;
+    }
+
+    .chosen-container {
+        width: 100% !important;
+    }
+
+    select[multiple], select.form-control[multiple] {
+        height: 27px !important;
+        width: 264px !important;
+    }
+</style>
+
+<form id="frmCreateProject" data-parsley-validate>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row form-group">
+                        <div class="col-sm-4">
+                            <label>Project Name:<em>*</em></label><br />
+                            <label>@ViewBag.ProjectID</label>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label>List of employees:<em>*</em></label><br />
+                            <div class="chosen-container chosen-container-multi" title="" id="form_field_select_4_chosen">
+                                <select multiple="" id="Id_EmployeeList" name="EmployeeList" class="chosen-select form-control  tag-input-style" data-placeholder="Choose Employees">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row margin-bottom10 margin-top10">
+                            <div class="col-md-12">
+                                <div style="float:right">
+                                    <button class="btn btn-primary" id="Id_Save" type="button">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+                    </div> <!-- / .panel-body -->
+
+                </div> <!-- / .panel-footer -->
+
+            </div>
+        </div>
+
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+</form>
+
+
+<script type="text/javascript">
+    var SelectedEmploeeId = [];
+    $(document).ready(function () {
+        LoadEmployees();
+
+
+        if (!ace.vars["touch"]) {
+            $(".chosen-select").chosen({ allow_single_deselect: true });
+            //resize the chosen on window resize
+            $(window)
+                .off("resize.chosen")
+                .on("resize.chosen",
+                    function () {
+                        $(".chosen-select").each(function () {
+                            var $this = $(this);
+                            $this.next().css({ 'width': $this.parent().width() });
+                        });
+                    }).trigger("resize.chosen");
+            //resize chosen on sidebar collapse/expand
+            $(document).on("settings.ace.chosen",
+                function (e, event_name, event_val) {
+                    if (event_name != "sidebar_collapsed") return;
+                    $(".chosen-select").each(function () {
+                        var $this = $(this);
+                        $this.next().css({ 'width': $this.parent().width() });
+                    });
+                });
+            $("#chosen-multiple-style .btn").on("click",
+                function (e) {
+                    var target = $(this).find("input[type=radio]");
+                    var which = parseInt(target.val());
+                    if (which === 2) $("#form_field_select_4").addClass("tag-input-style");
+                    else $("#form_field_select_4").removeClass("tag-input-style");
+                });
+            $("#chosen-multiple-style .btn").on("click",
+                function (e) {
+                    var target = $(this).find("input[type=radio]");
+                    var which = parseInt(target.val());
+                    if (which === 2) $("#form_feild_taxcode").addClass("tag-input-style");
+                    else $("#form_feild_taxcode").removeClass("tag-input-style");
+                });
+        }
+
+        $("#Id_EmployeeList").change(function () {
+            SelectedEmploeeId = [];
+            $('#Id_EmployeeList').trigger("chosen:updated");
+            $('#Id_EmployeeList :selected').each(function (i, selected) {
+                var ddd = $(selected).val();
+                var data = ddd.split("  ");
+                var Employeeid = data[0];
+                if ($.inArray(Employeeid, SelectedEmploeeId) == -1)
+                {
+                    SelectedEmploeeId.push(Employeeid);
+                }
+            })
+        })
+
+        $("#Id_Save").on('click', function (e) {
+            debugger;
+            var uploadFormData = new FormData();
+            uploadFormData.append('ProjectID', @ViewBag.ProjectID);
+            uploadFormData.append('SelectedEmployees', SelectedEmploeeId);
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AssignedEmployees", "Projectmanagement")',
+                contentType: false,
+                processData: false,
+                data: uploadFormData,
+                success: function (data) {
+                    alert(data);
+                },
+                error: function () {
+                }
+            });
+        })
+    });
+
+    function LoadEmployees() {
+            $.ajax({
+                url: '../getEmployeesList',
+                type: "POST",
+                data: {
+                },
+                success: function (data) {
+                    $('#Id_EmployeeList').empty();
+                    $(data).each(function (i) {
+                        $("#Id_EmployeeList").append("<option value='" + data[i].EmployeeID + "'>" + data[i].EmployeeName + "</option>");
+                    });
+                    $('#Id_EmployeeList').trigger("chosen:updated");
+                },
+                error: function (errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+    }
+
+</script>

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DHRM.BusinessEntity.AssignedProjectEmployeeDetails>
+
+@{
+    ViewBag.Title = "EmployeeDetails";
+    Layout = "~/Views/Shared/_PrivateLayout.cshtml";
+}
+
+<h1 class="page-header" active-menu="#lead_reports" active-submenu="#menu-leadreport">Employee Details</h1>
+
+<style>
+    .id_tancopy1 {
+        display: block !important;
+        background-color: black;
+    }
+</style>
+
+<form id="frmCreateProject" data-parsley-validate>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row form-group">
+                        <div class="col-sm-4"><br />
+                            <label>Project Name:</label><br />
+                            <label>@ViewBag.ProjectName</label>
+                        </div>
+                        <div class="col-sm-8">
+                            <table class="table">
+                                <tr>
+                                    <th>
+                                        @Html.Label("Employees:")
+                                    </th>
+                                </tr>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Employee.EmployeeName)
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div> <!-- / .panel-body -->
+                </div> <!-- / .panel-footer -->
+            </div>
+        </div>
+
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+</form>
